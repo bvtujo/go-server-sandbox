@@ -10,7 +10,7 @@ phases:
       - cd $CODEBUILD_SRC_DIR
       # Download the ecs-cli-v2 linux binary.
       - mkdir ecs-preview
-      - git clone git@github.com:aws/amazon-ecs-cli-v2 ecs-preview
+      - git clone git@github.com:aws/amazon-ecs-cli-v2.git ecs-preview
       - cd ecs-preview 
       - make
       - mv ./bin/local/ecs-preview-amd64 $CODEBUILD_SRC_DIR/ecs-preview
