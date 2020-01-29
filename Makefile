@@ -19,3 +19,6 @@ stop :
 
 gobuild :
 	go build main.go
+
+test :
+	go test -v ./...

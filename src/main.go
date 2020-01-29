@@ -7,12 +7,18 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func main() {
+func newRouter() *mux.Router {
 	r := mux.NewRouter()
-
 	r.HandleFunc("/hello", handler).Methods("GET")
 
-	http.ListenAndServe(":80", nil)
+	staticFileDirectory := http.Dir("./assets/")
+	staticFileHandler := http.StripPrefix("/assets/", http.FileServer(staticFileDirectory))
+	r.PathPrefix("/assets/").Handler(staticFileHandler).Methods("GET")
+	return r
+}
+func main() {
+	r := newRouter()
+	http.ListenAndServe(":80", r)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
