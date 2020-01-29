@@ -28,6 +28,7 @@ phases:
       # Generate the cloudformation templates.
       # The tag is the build ID but we replaced the colon ':' with a dash '-'.
       - tag=$(sed 's/:/-/g' <<<"$CODEBUILD_BUILD_ID")
+      - mkdir ./infrastructure  
       - >
         for env in $envs; do
           for app in $apps; do
