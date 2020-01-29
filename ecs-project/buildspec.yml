@@ -9,8 +9,8 @@ phases:
       - echo "cd into $CODEBUILD_SRC_DIR"
       - cd $CODEBUILD_SRC_DIR
       # Download the ecs-cli-v2 linux binary.
-      - wget https://ecs-cli-v2-release.s3.amazonaws.com/ecs-preview-linux-v0.0.4
-      - mv ./ecs-preview-linux-v0.0.4 ./ecs-preview
+      - wget https://ecs-cli-v2-release.s3.amazonaws.com/ecs-preview-linux-v0.0.4-9-ge36085a
+      - mv ./ecs-preview-linux-v0.0.4-9-ge36085a ./ecs-preview
       - chmod +x ./ecs-preview
   build:
     commands:
@@ -25,7 +25,7 @@ phases:
       # Remove forward slashes and the trailing -app.yml to get the names
       - apps=$(find ./ecs-project -name '*-app.yml' | sed -e 's!.*/!!' -e 's/-app.yml//')
       - echo "found apps - $apps"
-      - envs=$(./ecs-preview env ls --json | jq '.environments[].name' | sed 's/"//g')
+      - envs=
       - echo "found envs - $envs"
       # Generate the cloudformation templates.
       # The tag is the build ID but we replaced the colon ':' with a dash '-'.
