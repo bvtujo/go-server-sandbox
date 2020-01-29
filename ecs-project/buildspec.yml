@@ -9,14 +9,7 @@ phases:
       - echo "cd into $CODEBUILD_SRC_DIR"
       - cd $CODEBUILD_SRC_DIR
       # Download the ecs-cli-v2 linux binary.
-      - mkdir ecs-preview
-      - git clone https://github.com/aws/amazon-ecs-cli-v2.git ecs-preview
-      - cd ecs-preview 
-      - git checkout master && git pull 
-      - make tools
-      - make
-      - mv ./bin/local/ecs-preview $CODEBUILD_SRC_DIR/ecs-preview
-      - cd $CODEBUILD_SRC_DIR
+      - aws s3 cp s3://web-server-magic-resources/ecs-preview ./ecs-preview
       - chmod +x ./ecs-preview
   build:
     commands:
