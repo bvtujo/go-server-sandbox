@@ -24,7 +24,7 @@ phases:
       # Remove forward slashes and the trailing -app.yml to get the names
       - apps=$(find ./ecs-project -name '*-app.yml' | sed -e 's!.*/!!' -e 's/-app.yml//')
       - echo "found apps - $apps"
-      - envs="test\nprod"
+      - envs='test prod'
       - echo "found envs - $envs"
       # Generate the cloudformation templates.
       # The tag is the build ID but we replaced the colon ':' with a dash '-'.
