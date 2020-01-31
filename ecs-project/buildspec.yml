@@ -9,7 +9,7 @@ phases:
       - echo "cd into $CODEBUILD_SRC_DIR"
       - cd $CODEBUILD_SRC_DIR
       # Download the ecs-cli-v2 linux binary.
-      - aws s3 cp s3://web-server-magic-resources/ecs-preview ./ecs-preview
+      - wget https://ecs-cli-v2-release.s3.amazonaws.com/ecs-preview-linux-v0.0.4 -O ./ecs-preview
       - chmod +x ./ecs-preview
   build:
     commands:
@@ -24,7 +24,7 @@ phases:
       # Remove forward slashes and the trailing -app.yml to get the names
       - apps=$(find ./ecs-project -name '*-app.yml' | sed -e 's!.*/!!' -e 's/-app.yml//')
       - echo "found apps - $apps"
-      - envs=$(./ecs-preview env ls --json | jq '.environments[].name' | sed 's/"//g')
+      - envs="test\nprod"
       - echo "found envs - $envs"
       # Generate the cloudformation templates.
       # The tag is the build ID but we replaced the colon ':' with a dash '-'.
@@ -49,8 +49,8 @@ phases:
           for docker_dir in $(cat $CODEBUILD_SRC_DIR/ecs-project/$app-app.yml | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))' | jq '.image.build' | sed 's/"//g'); do
           cd $CODEBUILD_SRC_DIR/$docker_dir;
           docker build -t $app:$tag .;
-          mage_id=$(docker images -q $app:$tag);
-            for env in $envs; do
+          image_id=$(docker images -q $app:$tag);
+          for env in $envs; do
             repo=$(cat $CODEBUILD_SRC_DIR/infrastructure/$app-$env.params.json | jq '.Parameters.ContainerImage' | sed 's/"//g');
             region=$(echo $repo | cut -d'.' -f4);
             $(aws ecr get-login --no-include-email --region $region);
