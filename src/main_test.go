@@ -35,7 +35,7 @@ func TestHandler(t *testing.T) {
 }
 
 func TestRouter(t *testing.T) {
-	r := newRouter()
+	r := newRouter("assets")
 
 	mockServer := httptest.NewServer(r)
 
@@ -64,7 +64,7 @@ func TestRouter(t *testing.T) {
 }
 
 func TestForNonExistentRoute(t *testing.T) {
-	r := newRouter()
+	r := newRouter("assets")
 	mockServer := httptest.NewServer(r)
 	resp, err := http.Post(mockServer.URL+"/hello", "", nil)
 	if err != nil {
@@ -86,9 +86,8 @@ func TestForNonExistentRoute(t *testing.T) {
 }
 
 func TestFileServer(t *testing.T) {
-	r := newRouter()
+	r := newRouter("assets")
 	mockServer := httptest.NewServer(r)
-
 	resp, err := http.Get(mockServer.URL + "/assets/")
 	if err != nil {
 		t.Fatal(err)
@@ -99,7 +98,7 @@ func TestFileServer(t *testing.T) {
 	}
 
 	contentType := resp.Header.Get("Content-Type")
-	expectedContentType := "text/html; charset utf-8"
+	expectedContentType := "text/html; charset=utf-8"
 
 	if expectedContentType != contentType {
 		t.Errorf("Wrong content type, expected %s got %s", expectedContentType, contentType)

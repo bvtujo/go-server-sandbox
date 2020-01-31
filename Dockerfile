@@ -3,5 +3,5 @@ ENV GOPROXY=direct
 ADD . /app
 WORKDIR /app
 RUN go build -o bin/main src/main.go
-ENTRYPOINT ./bin/main
+ENTRYPOINT ["./bin/main"]
 EXPOSE 80
