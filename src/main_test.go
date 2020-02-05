@@ -7,6 +7,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+
+	. "github.com/stretchr/testify/assert"
+	. "github.com/stretchr/testify/suite"
 )
 
 func TestHandler(t *testing.T) {
@@ -18,7 +21,7 @@ func TestHandler(t *testing.T) {
 
 	recorder := httptest.NewRecorder()
 
-	hf := http.HandlerFunc(handler)
+	hf := http.HandlerFunc(Handler)
 
 	hf.ServeHTTP(recorder, req)
 
@@ -29,13 +32,11 @@ func TestHandler(t *testing.T) {
 
 	expected := `Hello World!`
 	actual := recorder.Body.String()
-	if actual != expected {
-		t.Errorf("handler returned unexpected body: got %v want %v", actual, expected)
-	}
+	Equal(t, expected, actual)
 }
 
 func TestRouter(t *testing.T) {
-	r := newRouter("assets")
+	r := NewRouter("assets")
 
 	mockServer := httptest.NewServer(r)
 
@@ -64,7 +65,7 @@ func TestRouter(t *testing.T) {
 }
 
 func TestForNonExistentRoute(t *testing.T) {
-	r := newRouter("assets")
+	r := NewRouter("assets")
 	mockServer := httptest.NewServer(r)
 	resp, err := http.Post(mockServer.URL+"/hello", "", nil)
 	if err != nil {
@@ -86,7 +87,7 @@ func TestForNonExistentRoute(t *testing.T) {
 }
 
 func TestFileServer(t *testing.T) {
-	r := newRouter("assets")
+	r := NewRouter("assets")
 	mockServer := httptest.NewServer(r)
 	resp, err := http.Get(mockServer.URL + "/assets/")
 	if err != nil {
@@ -103,4 +104,28 @@ func TestFileServer(t *testing.T) {
 	if expectedContentType != contentType {
 		t.Errorf("Wrong content type, expected %s got %s", expectedContentType, contentType)
 	}
+}
+
+type ParseURLSuite struct {
+	Suite
+	Expected URLCommand
+}
+func (suite *ParseURLSuite) SetupTest() {
+	suite.Expected = URLCommand{SourceUser: "david", DestUser: "austin", Points: 5}
+}
+
+func (suite *ParseURLSuite) TestParseURLHTTP() {
+	inputURL := "http://david.gives.5.points.to/austin"
+	actualOutput := parseURL(inputURL)
+	Equal(suite.T(), suite.Expected, actualOutput)
+}
+
+func (suite *ParseURLSuite) TestParseURLHTTPS() {
+	inputURL := "https://david.gives.5.points.to/austin"
+	actualOutput := parseURL(inputURL)
+	Equal(suite.T(), suite.Expected, actualOutput)
+}
+	
+func TestParseURLSuite(t *testing.T) {
+	Run(t, new(ParseURLSuite))
 }

@@ -7,9 +7,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func newRouter(folder string) *mux.Router {
+func NewRouter(folder string) *mux.Router {
 	r := mux.NewRouter()
-	r.HandleFunc("/hello", handler).Methods("GET")
+	r.HandleFunc("/hello", Handler).Methods("GET")
 
 	staticFileDirectory := http.Dir(folder)
 	staticFileHandler := http.StripPrefix("/assets/", http.FileServer(staticFileDirectory))
@@ -17,10 +17,10 @@ func newRouter(folder string) *mux.Router {
 	return r
 }
 func main() {
-	r := newRouter("src/assets")
+	r := NewRouter("src/assets")
 	http.ListenAndServe(":80", r)
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
+func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Hello World!")
 }
