@@ -108,8 +108,10 @@ func TestFileServer(t *testing.T) {
 
 type ParseURLSuite struct {
 	Suite
-	Expected URLCommand
+	Expected          URLCommand
+	ExpectedAnonymous URLCommand
 }
+
 func (suite *ParseURLSuite) SetupTest() {
 	suite.Expected = URLCommand{SourceUser: "david", DestUser: "austin", Points: 5}
 }
@@ -125,7 +127,12 @@ func (suite *ParseURLSuite) TestParseURLHTTPS() {
 	actualOutput := parseURL(inputURL)
 	Equal(suite.T(), suite.Expected, actualOutput)
 }
-	
+
+func (suite *ParseURLSuite) TestParseURLAnonymousHTTP() {
+	inputURL := "http://5.points.to/austin"
+	actualOutput := parseURL(inputURL)
+	Equal(suite.T(), suite.ExpectedAnonymous, actualOutput)
+}
 func TestParseURLSuite(t *testing.T) {
 	Run(t, new(ParseURLSuite))
 }

@@ -6,6 +6,10 @@ dpl ?= deploy.env
 include $(dpl)
 export $(shell sed 's/=.*//' $(dpl))
 
+apibuild :
+	go build -o bin/api ./api/pkg/main
+apirun : apibuild
+	./bin/api
 build :
 	go build -o bin/main src/main.go
 dbuild : 
@@ -20,6 +24,8 @@ up : dbuild drun
 stop :
 	docker stop $(APP_NAME); docker rm $(APP_NAME)
 
-
 test : build
 	go test -v ./...
+
+clean :
+	rm -rf bin/*
