@@ -36,7 +36,7 @@ func TestHandler(t *testing.T) {
 }
 
 func TestRouter(t *testing.T) {
-	r := NewRouter("assets")
+	r := NewRouter()
 
 	mockServer := httptest.NewServer(r)
 
@@ -65,7 +65,7 @@ func TestRouter(t *testing.T) {
 }
 
 func TestForNonExistentRoute(t *testing.T) {
-	r := NewRouter("assets")
+	r := NewRouter()
 	mockServer := httptest.NewServer(r)
 	resp, err := http.Post(mockServer.URL+"/hello", "", nil)
 	if err != nil {
@@ -84,55 +84,4 @@ func TestForNonExistentRoute(t *testing.T) {
 	if respString != expected {
 		t.Errorf("response should be %s, got %s", expected, respString)
 	}
-}
-
-func TestFileServer(t *testing.T) {
-	r := NewRouter("assets")
-	mockServer := httptest.NewServer(r)
-	resp, err := http.Get(mockServer.URL + "/assets/")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		t.Errorf("Status should be 200, got %d", resp.StatusCode)
-	}
-
-	contentType := resp.Header.Get("Content-Type")
-	expectedContentType := "text/html; charset=utf-8"
-
-	if expectedContentType != contentType {
-		t.Errorf("Wrong content type, expected %s got %s", expectedContentType, contentType)
-	}
-}
-
-type ParseURLSuite struct {
-	Suite
-	Expected          URLCommand
-	ExpectedAnonymous URLCommand
-}
-
-func (suite *ParseURLSuite) SetupTest() {
-	suite.Expected = URLCommand{SourceUser: "david", DestUser: "austin", Points: 5}
-}
-
-func (suite *ParseURLSuite) TestParseURLHTTP() {
-	inputURL := "http://david.gives.5.points.to/austin"
-	actualOutput := parseURL(inputURL)
-	Equal(suite.T(), suite.Expected, actualOutput)
-}
-
-func (suite *ParseURLSuite) TestParseURLHTTPS() {
-	inputURL := "https://david.gives.5.points.to/austin"
-	actualOutput := parseURL(inputURL)
-	Equal(suite.T(), suite.Expected, actualOutput)
-}
-
-func (suite *ParseURLSuite) TestParseURLAnonymousHTTP() {
-	inputURL := "http://5.points.to/austin"
-	actualOutput := parseURL(inputURL)
-	Equal(suite.T(), suite.ExpectedAnonymous, actualOutput)
-}
-func TestParseURLSuite(t *testing.T) {
-	Run(t, new(ParseURLSuite))
 }

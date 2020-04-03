@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	"internal/pkg/points"
+	"github.com/bvtujo/go-server-sandbox/internal/pkg/points"
 
 	"github.com/julienschmidt/httprouter"
 	"github.com/sirupsen/logrus"
@@ -62,7 +62,7 @@ func PutPoints(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 func GetUser(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	w.Header().Set("Content-Type", "application/json")
 	serialized, err := json.Marshal(
-		points.PointsUser{
+		points.User{
 			Uuid:   "fab5",
 			Points: 5,
 			Transactions: []points.PointsInput{
@@ -82,8 +82,13 @@ func GetUser(w http.ResponseWriter, req *http.Request, ps httprouter.Params) {
 	return
 }
 
+func HealthCheck(w http.ResponseWriter, req *http.Request, _ httprouter.Params) {
+	w.WriteHeader(http.StatusOK)
+}
+
 func main() {
 	router := httprouter.New()
+	router.GET("/", HealthCheck)
 	router.POST("/api/:points/points/to/:user", PutPoints)
 	router.GET("/api/user/:user", GetUser)
 

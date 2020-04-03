@@ -9,13 +9,16 @@ type: Load Balanced Web App
 
 image:
   # Path to your application's Dockerfile.
-  build: ./build/frontend/Dockerfile
+  build: cmd/frontend/Dockerfile
   # Port exposed through your container to route traffic to it.
   port: 80
 
 http:
-  # Requests to this path will be forwarded to your service.
+  # Requests to this path will be forwarded to your service. 
+  # To match all requests you can use the "/" path. 
   path: 'frontend'
+  # You can specify a custom health check path. The default is "/"
+  # healthcheck: '/'
 
 # Number of CPU units for the task.
 cpu: 256
